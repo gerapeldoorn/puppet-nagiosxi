@@ -42,20 +42,42 @@
 #
 # Copyright 2017 Your name here, unless otherwise noted.
 #
+# TODO: Redirect apache / -> /nagiosxi
+# TODO: SSL
 class nagiosxi(
-  $rpmrepo_url = $nagiosxi::params::rpmrepo_url,
-  ) inherits nagiosxi::params {
+  $nagios_url,
+  $nagios_apikey,
+  $rpmrepo_url                     = $nagiosxi::params::rpmrepo_url,
+  $mysqldb_innodb_buffer_pool_size = $nagiosxi::params::mysqldb_innodb_buffer_pool_size,
+  $mysqldb_innodb_log_file_size    = $nagiosxi::params::mysqldb_innodb_log_file_size,
+  $mysqldb_innodb_log_buffer_size  = $nagiosxi::params::mysqldb_innodb_log_buffer_size,
+  $mysqldb_max_allowed_packet      = $nagiosxi::params::mysqldb_max_allowed_packet,
+  $mysqldb_max_connections         = $nagiosxi::params::mysqldb_max_connections,
+) inherits nagiosxi::params {
 
-  include mysql::server
-
-  package { 'nagiosxi_repo':
-    ensure => installed,
-    source => $rpmrepo_url,
+  class { 'mysql::server':
+    package_name            => 'mariadb-server',
+    service_name            => 'mariadb',
+    override_options        => {
+      'mysqld' => {
+        'innodb_buffer_pool_size' => $mysqldb_innodb_buffer_pool_size,
+        'innodb_log_file_size'    => $mysqldb_innodb_log_file_size,
+        'innodb_log_buffer_size'  => $mysqldb_innodb_log_buffer_size,
+        'max_allowed_packet'      => $mysqldb_max_allowed_packet,
+        'max_connections'         => $mysqldb_max_connections,
+      },
+    },
   }
 
+  ensure_resource( 'package', 'nagios-repo', {
+    'ensure'   => 'installed',
+    'source'   => $rpmrepo_url,
+    'provider' => 'rpm',
+  })
+  
   package { 'nagiosxi':
     ensure  => installed,
-    require => Class['mysql::server'],
+    require => [Class['mysql::server'], Package['nagios-repo'] ],
   }
 
   sudo::conf { 'nagiosxi':
