@@ -42,7 +42,24 @@
 #
 # Copyright 2017 Your name here, unless otherwise noted.
 #
-class nagiosxi {
+class nagiosxi(
+  $rpmrepo_url = $nagiosxi::params::rpmrepo_url,
+  ) inherits nagiosxi::params {
 
+  include mysql::server
+
+  package { 'nagiosxi_repo':
+    ensure => installed,
+    source => $rpmrepo_url,
+  }
+
+  package { 'nagiosxi':
+    ensure  => installed,
+    require => Class['mysql::server'],
+  }
+
+  sudo::conf { 'nagiosxi':
+    source => 'puppet:///modules/nagiosxi/sudoers',
+  }
 
 }
