@@ -1,5 +1,7 @@
 # == Define: nagiosxi::host
 #
+# This resource defines a Nagios host. You can export this on all managed hosts and import it in your profile
+# Host <<| |>>
 define nagiosxi::host (
   $ip,
   $nagios_alias,
