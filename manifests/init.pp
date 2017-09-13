@@ -34,7 +34,6 @@
 #
 # Copyright 2017 Ger Apeldoorn, unless otherwise noted.
 #
-# TODO: Redirect apache / -> /nagiosxi
 # TODO: SSL
 class nagiosxi(
   $nagios_url,
