@@ -1,5 +1,6 @@
 # == Class: nagiosxi::params
 #
+# Some sensible defaults
 class nagiosxi::params {
   $mysqldb_innodb_buffer_pool_size = '4096M'
   $mysqldb_innodb_log_file_size    = '1024M'

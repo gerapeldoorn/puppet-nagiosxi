@@ -39,6 +39,7 @@
 class nagiosxi(
   $nagios_url,
   $nagios_apikey,
+  $pkgversion                      = 'installed',
   $rpmrepo_url                     = $nagiosxi::params::rpmrepo_url,
   $mysqldb_innodb_buffer_pool_size = $nagiosxi::params::mysqldb_innodb_buffer_pool_size,
   $mysqldb_innodb_log_file_size    = $nagiosxi::params::mysqldb_innodb_log_file_size,
@@ -68,8 +69,14 @@ class nagiosxi(
   })
 
   package { 'nagiosxi':
-    ensure  => installed,
+    ensure  => $pkgversion,
     require => [Class['mysql::server'], Package['nagios-repo'] ],
+  }
+
+  file { '/var/www/html/index.php':
+    ensure => file,
+    mode   => '0644',
+    source => 'puppet:///modules/nagiosxi/index.php',
   }
 
   sudo::conf { 'nagiosxi':
