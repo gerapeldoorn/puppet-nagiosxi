@@ -19,6 +19,10 @@ include nagiosxi
 ```yaml
 nagiosxi::nagios_url   : http://nagios.example.com
 nagiosxi::nagios_apikey: ---YOUR APIKEY--- (only required when using exported resources for host creation)
+nagiosxi::xi_admin_email: myemail@example.com
+nagiosxi::xi_admin_description: My Name
+nagiosxi::xi_admin_timezone: Europe/Amsterdam
+nagiosxi::xi_admin_password: SuperSecret
 ```
 
 In your base profile:
@@ -41,13 +45,8 @@ Nagiosxi::Host<<| |>>
 
 ## Limitations
 
-Not widely tested yet, just CentOS 7.
+Not widely tested (yet), just CentOS 7.
 
 ## Development
 
 Feel free to submit PR's
-
-## Release Notes
-
-##0.1.0 Inital release
-Basic functionality

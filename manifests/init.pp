@@ -38,6 +38,10 @@
 class nagiosxi(
   $nagios_url,
   $nagios_apikey,
+  $xi_admin_email,
+  $xi_admin_description,
+  $xi_admin_password,
+  $xi_admin_timezone,
   $pkgversion                      = 'installed',
   $rpmrepo_url                     = $nagiosxi::params::rpmrepo_url,
   $mysqldb_innodb_buffer_pool_size = $nagiosxi::params::mysqldb_innodb_buffer_pool_size,
@@ -82,4 +86,27 @@ class nagiosxi(
     source => 'puppet:///modules/nagiosxi/sudoers',
   }
 
+  file { '/usr/local/nagiosxi/scripts/custom_configscript.sh':
+    ensure  => file,
+    mode    => '0755',
+    content => epp('nagiosxi/configscript.sh', {
+      xi_admin_email       => $xi_admin_email,
+      xi_admin_description => $xi_admin_description,
+      xi_admin_password    => $xi_admin_password,
+      xi_admin_timezone    => $xi_admin_timezone,
+      }),
+    require => Package['nagiosxi'],
+  }
+
+  exec { 'nagios_configscript':
+    command => '/usr/local/nagiosxi/scripts/custom_configscript.sh',
+    creates => '/usr/local/nagiosxi/custom_configscript.log',
+    require => File['/usr/local/nagiosxi/scripts/custom_configscript.sh'],
+    notify  => Service['nagios'],
+  }
+
+  service { 'nagios':
+    ensure => running,
+    enable => true,
+  }
 }
