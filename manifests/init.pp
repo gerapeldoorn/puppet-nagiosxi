@@ -43,6 +43,7 @@ class nagiosxi(
   $xi_admin_password,
   $xi_admin_timezone,
   $pkgversion                      = 'installed',
+  $repoversion                     = 'installed',
   $rpmrepo_url                     = $nagiosxi::params::rpmrepo_url,
   $mysqldb_innodb_buffer_pool_size = $nagiosxi::params::mysqldb_innodb_buffer_pool_size,
   $mysqldb_innodb_log_file_size    = $nagiosxi::params::mysqldb_innodb_log_file_size,
@@ -66,7 +67,7 @@ class nagiosxi(
   }
 
   ensure_resource( 'package', 'nagios-repo', {
-    'ensure'   => 'installed',
+    'ensure'   => $repoversion,
     'source'   => $rpmrepo_url,
     'provider' => 'rpm',
   })
